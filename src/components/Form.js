@@ -1,9 +1,40 @@
-import React from 'react'
+import React from "react";
+import { MdSend } from "react-icons/md";
+const Form = ({ charge, amount, handleCharge, handleAmount, handleSubmit }) => {
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="form-center">
+        <div className="form-group">
+          <label htmlFor="expense">charge</label>
+          <input
+            type="text"
+            className="form-control"
+            id="charge"
+            name="charge"
+            placeholder="e.g. credits"
+            value={charge}
+            onChange={handleCharge}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="expense">amount</label>
+          <input
+            type="number"
+            className="form-control"
+            id="amount"
+            name="amount"
+            placeholder="e.g. 10"
+            value={amount}
+            onChange={handleAmount}
+          />
+        </div>
+      </div>
+      <button type="submit" className="btn">
+        submit
+        <MdSend className="btn-icon"></MdSend>
+      </button>
+    </form>
+  );
+};
 
-const Form = () => {
-    return (
-        <div>form</div>
-    )
-}
-
-export default Form
+export default Form;
