@@ -1,0 +1,7 @@
+{
+    "data": [
+        { "id": 1, "charge": "rent", "amount": 1600 },   
+        { "id": 2, "charge": "car", "amount": 400 },
+      { "id": 3, "charge": "credits", "amount": 12000 }
+    ]
+}

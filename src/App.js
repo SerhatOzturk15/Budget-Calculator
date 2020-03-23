@@ -10,12 +10,9 @@ import uuid from "uuid/v4";
 //   { id: uuid(), charge: "credits", amount: 12000 }
 // ];
 
-const initialExpenses = localStorage.getItem("expenses")
-  ? JSON.parse(localStorage.getItem("expenses"))
-  : [];
 function App() {
   //states
-  const [expenses, setExpenses] = useState(initialExpenses);
+  const [expenses, setExpenses] = useState([]);
   const [charge, setCharge] = useState("");
   const [amount, setAmount] = useState("");
   const [alert, setAlert] = useState({ show: false });
@@ -23,10 +20,22 @@ function App() {
   const [id, setId] = useState("");
 
   //effect
+  // useEffect(() => {
+  //   console.log("run");
+  //   localStorage.setItem('expenses', JSON.stringify(expenses));
+  // }, [expenses]);
+
   useEffect(() => {
-    console.log("run");
-    localStorage.setItem('expenses', JSON.stringify(expenses));
-  }, [expenses]);
+    getAllExpenses();
+  }, []);
+
+  const getAllExpenses = () => {
+    fetch("http://localhost:3001/expenses")
+      .then(res => res.json())
+      .then(result => {
+        setExpenses(result.data);
+      });
+  };
 
   //functions
   const handleCharge = event => {
@@ -52,13 +61,13 @@ function App() {
         let tempExpenses = expenses.map(item => {
           return item.id === id ? { ...item, charge, amount } : item;
         });
-        setExpenses(tempExpenses);
+        handleExpenses(tempExpenses);
         setId("");
         setEdit(false);
         handleAlert({ show: true, type: "success", text: "item edited" });
       } else {
         const singleExpense = { id: uuid(), charge, amount };
-        setExpenses([...expenses, singleExpense]);
+        addExpense(singleExpense);
         handleAlert({ show: true, type: "success", text: "item added" });
       }
       setCharge("");
@@ -72,15 +81,54 @@ function App() {
     }
   };
 
+  ///api handlers
+  const handleExpenses = expenses => {
+    fetch("http://localhost:3001/setExpenses", {
+      method: "POST",
+      body: JSON.stringify(expenses)
+    })
+      .then(res => res.json())
+      .then(result => {
+        setExpenses(result);
+      });
+  };
+
+  const addExpense = expense => {
+    fetch(`http://localhost:3001/addExpense`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(expense)
+    })
+      .then(res => res.json())
+      .then(result => {
+        getAllExpenses();
+      });
+  };
+
   //clear items
   const clearItems = () => {
-    setExpenses([]);
-    handleAlert({ type: "danger", text: "all items have been removed" });
+    fetch(`http://localhost:3001/deleteAll`, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+    })
+      .then(res => res.json())
+      .then(result => {
+        if(result.state === true){
+          handleAlert({ type: "danger", text: "all items have been removed" });
+          getAllExpenses()
+        }
+      });
   };
 
   const handleDelete = id => {
     const updatedExpenses = expenses.filter(x => x.id !== id);
-    setExpenses(updatedExpenses);
+    handleExpenses(updatedExpenses);
     handleAlert({
       type: "danger",
       text: `item with id ${id} has been deleted`
