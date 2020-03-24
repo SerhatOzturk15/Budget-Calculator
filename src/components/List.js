@@ -1,7 +1,7 @@
 import React from "react";
 import Item from "./Item";
 import { MdDelete } from "react-icons/md";
-const List = ({ expenses, handleDelete, handleEdit, clearItems }) => {
+const List = ({ expenses, handleDelete, handleEdit, clearExpenses }) => {
   return (
     <>
       <ul className="list">
@@ -18,7 +18,7 @@ const List = ({ expenses, handleDelete, handleEdit, clearItems }) => {
       </ul>
 
       {expenses.length > 0 && (
-        <button className="btn" onClick={clearItems}>
+        <button className="btn" onClick={clearExpenses}>
           clear expenses
           <MdDelete className="btn-icon" />
         </button>

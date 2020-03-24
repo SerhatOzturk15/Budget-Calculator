@@ -3,12 +3,14 @@ import "./App.css";
 import List from "./components/List";
 import Form from "./components/Form";
 import Alert from "./components/Alert";
+import {
+  getAllExpenses,
+  handleExpenses,
+  addExpense,
+  removeExpenses,
+  removeAnExpense
+} from "./ApiHelper";
 import uuid from "uuid/v4";
-// const initialExpenses = [
-//   { id: uuid(), charge: "rent", amount: 1600 },
-//   { id: uuid(), charge: "car", amount: 400 },
-//   { id: uuid(), charge: "credits", amount: 12000 }
-// ];
 
 function App() {
   //states
@@ -26,16 +28,11 @@ function App() {
   // }, [expenses]);
 
   useEffect(() => {
-    getAllExpenses();
+    let promise = getAllExpenses();
+    promise.then(result => {
+      setExpenses(result);
+    });
   }, []);
-
-  const getAllExpenses = () => {
-    fetch("http://localhost:3001/expenses")
-      .then(res => res.json())
-      .then(result => {
-        setExpenses(result.data);
-      });
-  };
 
   //functions
   const handleCharge = event => {
@@ -61,14 +58,29 @@ function App() {
         let tempExpenses = expenses.map(item => {
           return item.id === id ? { ...item, charge, amount } : item;
         });
-        handleExpenses(tempExpenses);
+        handleExpenses(tempExpenses).then(result => {
+          setExpenses(result);
+        });
         setId("");
         setEdit(false);
         handleAlert({ show: true, type: "success", text: "item edited" });
       } else {
         const singleExpense = { id: uuid(), charge, amount };
-        addExpense(singleExpense);
-        handleAlert({ show: true, type: "success", text: "item added" });
+        addExpense(singleExpense)
+          .then(() => {
+            return getAllExpenses();
+          })
+          .then(result => {
+            setExpenses(result);
+            handleAlert({ show: true, type: "success", text: "item added" });
+          })
+          .catch(() => {
+            handleAlert({
+              show: true,
+              type: "danger",
+              text: "item could not be added"
+            });
+          });
       }
       setCharge("");
       setAmount("");
@@ -81,58 +93,30 @@ function App() {
     }
   };
 
-  ///api handlers
-  const handleExpenses = expenses => {
-    fetch("http://localhost:3001/setExpenses", {
-      method: "POST",
-      body: JSON.stringify(expenses)
-    })
-      .then(res => res.json())
-      .then(result => {
-        setExpenses(result);
+  const handleDelete = id => {
+    let promise  = removeAnExpense(id)
+    .then(result =>{
+      return getAllExpenses();
+    }).then(result =>{
+      setExpenses(result)
+      handleAlert({
+        type: "danger",
+        text: `item with id ${id} has been deleted`
       });
+    })
   };
 
-  const addExpense = expense => {
-    fetch(`http://localhost:3001/addExpense`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(expense)
-    })
-      .then(res => res.json())
+  const clearExpenses = () => {
+    removeExpenses()
       .then(result => {
-        getAllExpenses();
-      });
-  };
-
-  //clear items
-  const clearItems = () => {
-    fetch(`http://localhost:3001/deleteAll`, {
-      method: "DELETE",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-    })
-      .then(res => res.json())
+        return result;
+      })
       .then(result => {
-        if(result.state === true){
+        if (result === true) {
+          setExpenses([]);
           handleAlert({ type: "danger", text: "all items have been removed" });
-          getAllExpenses()
         }
       });
-  };
-
-  const handleDelete = id => {
-    const updatedExpenses = expenses.filter(x => x.id !== id);
-    handleExpenses(updatedExpenses);
-    handleAlert({
-      type: "danger",
-      text: `item with id ${id} has been deleted`
-    });
   };
 
   const handleEdit = id => {
@@ -162,7 +146,7 @@ function App() {
         />
         <List
           expenses={expenses}
-          clearItems={clearItems}
+          clearExpenses={clearExpenses}
           handleDelete={handleDelete}
           handleEdit={handleEdit}
         />

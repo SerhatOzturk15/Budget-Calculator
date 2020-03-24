@@ -31,4 +31,13 @@ app.delete('/deleteAll', (req, res) =>{
     return res.json({ state: true});
 })
 
+app.delete('/removeAnExpense/:id', (req, res) => {
+    const id = req.params.id;
+    const indexToRemove = expenseContainer.data.indexOf(id)
+    if(indexToRemove){
+        expenseContainer.data.splice(indexToRemove, 1)
+        return res.json({state: true});
+    }
+})
+
 app.listen(port, () => console.log('listening on port 3001'))
