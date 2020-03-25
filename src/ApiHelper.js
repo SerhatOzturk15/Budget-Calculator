@@ -27,6 +27,21 @@ export const handleExpenses = expenses => {
   });
 };
 
+export const editExpense = (item) => {
+    return new Promise((resolve, reject) => {
+        fetch(`http://localhost:3001/editExpense/${item.id}/${item.charge}/${item.amount}`, {
+            method: "PUT",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json"
+            }
+          }).then(result => result.json())
+          .then(result =>{
+              resolve(result.state)
+          })      
+    })
+}
+
 export const removeAnExpense = id => {
   return new Promise((resolve, reject) => {
     fetch(`http://localhost:3001/removeAnExpense/${id}`, {

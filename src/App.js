@@ -8,7 +8,8 @@ import {
   handleExpenses,
   addExpense,
   removeExpenses,
-  removeAnExpense
+  removeAnExpense,
+  editExpense
 } from "./ApiHelper";
 import uuid from "uuid/v4";
 
@@ -55,15 +56,15 @@ function App() {
     event.preventDefault();
     if (charge && amount > 0) {
       if (edit) {
-        let tempExpenses = expenses.map(item => {
-          return item.id === id ? { ...item, charge, amount } : item;
-        });
-        handleExpenses(tempExpenses).then(result => {
-          setExpenses(result);
+        editExpense({id: id, charge: charge, amount: amount}).then(result => {
+          let tempExpenses = expenses.map(item => {
+            return item.id === id ? { ...item, charge, amount } : item;
+          });
+          setExpenses(tempExpenses);
+          handleAlert({ show: true, type: "success", text: "item edited" });
         });
         setId("");
         setEdit(false);
-        handleAlert({ show: true, type: "success", text: "item edited" });
       } else {
         const singleExpense = { id: uuid(), charge, amount };
         addExpense(singleExpense)

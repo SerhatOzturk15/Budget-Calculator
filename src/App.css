@@ -154,6 +154,10 @@ label {
   margin: 2rem auto 0 auto;
   border-radius: 2px;
   text-transform: capitalize;
+  position: absolute;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%)
 }
 .alert-danger {
   background: var(--mainRed);

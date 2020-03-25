@@ -1,10 +1,10 @@
 const express = require('express')
 const app = express()
 const port = 3001
-var cors = require('cors')
+const cors = require('cors')
 app.use(cors())
 const expenseContainer = require('./expenses.json');
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
 //root
@@ -25,8 +25,23 @@ app.post('/addExpense', (req, res) => {
     res.send([{ id: 4, charge: "adsad", amount: 12000 }])
 })
 
+app.put('/editExpense/:id/:charge/:amount', (req, res) => {
+    const id = req.params.id;
+    const charge = req.params.charge;
+    const amount = parseInt(req.params.amount);
+    console.log(`id: ${req.params.id}`);
+    console.log(`id: ${id}`);
+    console.log(`charge: ${charge}`);
+    const editedExpenses = expenseContainer.data.map(item => {
+        return item.id === id ? {...item, charge, amount} : item;
+    });
+    console.log(editedExpenses);
+    expenseContainer.data = Object.create(editedExpenses);
+    res.json({state: true});
+})
+
 app.delete('/deleteAll', (req, res) =>{
-    const id = req.id
+    const id = req.id;
     expenseContainer.data = []
     return res.json({ state: true});
 })
