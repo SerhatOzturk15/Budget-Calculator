@@ -29,13 +29,9 @@ app.put('/editExpense/:id/:charge/:amount', (req, res) => {
     const id = req.params.id;
     const charge = req.params.charge;
     const amount = parseInt(req.params.amount);
-    console.log(`id: ${req.params.id}`);
-    console.log(`id: ${id}`);
-    console.log(`charge: ${charge}`);
     const editedExpenses = expenseContainer.data.map(item => {
         return item.id === id ? {...item, charge, amount} : item;
     });
-    console.log(editedExpenses);
     expenseContainer.data = Object.create(editedExpenses);
     res.json({state: true});
 })

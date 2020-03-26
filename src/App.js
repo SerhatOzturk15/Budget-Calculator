@@ -5,7 +5,6 @@ import Form from "./components/Form";
 import Alert from "./components/Alert";
 import {
   getAllExpenses,
-  handleExpenses,
   addExpense,
   removeExpenses,
   removeAnExpense,
@@ -29,8 +28,8 @@ function App() {
   // }, [expenses]);
 
   useEffect(() => {
-    let promise = getAllExpenses();
-    promise.then(result => {
+    getAllExpenses()
+    .then(result => {
       setExpenses(result);
     });
   }, []);
@@ -69,10 +68,8 @@ function App() {
         const singleExpense = { id: uuid(), charge, amount };
         addExpense(singleExpense)
           .then(() => {
-            return getAllExpenses();
-          })
-          .then(result => {
-            setExpenses(result);
+            expenses.push(singleExpense);
+            setExpenses(expenses);
             handleAlert({ show: true, type: "success", text: "item added" });
           })
           .catch(() => {
@@ -95,11 +92,10 @@ function App() {
   };
 
   const handleDelete = id => {
-    let promise  = removeAnExpense(id)
-    .then(result =>{
-      return getAllExpenses();
-    }).then(result =>{
-      setExpenses(result)
+    removeAnExpense(id)
+    .then(() =>{
+      const tempExpenses = expenses.filter(item => item.id !== id);
+      setExpenses(tempExpenses)
       handleAlert({
         type: "danger",
         text: `item with id ${id} has been deleted`

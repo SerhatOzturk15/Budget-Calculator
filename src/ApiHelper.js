@@ -1,6 +1,8 @@
 const APIURL = "http://localhost:3001";
 
-///api handlers
+///API HANDLERS///
+
+// gets all expenses
 export const getAllExpenses = () => {
   return new Promise((resolve, reject) => {
     fetch(`${APIURL}/expenses`)
@@ -14,19 +16,7 @@ export const getAllExpenses = () => {
   });
 };
 
-export const handleExpenses = expenses => {
-  return new Promise((resolve, reject) => {
-    fetch(`${APIURL}/setExpenses`, {
-      method: "POST",
-      body: JSON.stringify(expenses)
-    })
-      .then(res => res.json())
-      .then(result => {
-        resolve(result);
-      });
-  });
-};
-
+//edit one expense
 export const editExpense = (item) => {
     return new Promise((resolve, reject) => {
         fetch(`http://localhost:3001/editExpense/${item.id}/${item.charge}/${item.amount}`, {
@@ -42,6 +32,7 @@ export const editExpense = (item) => {
     })
 }
 
+//remove an expense
 export const removeAnExpense = id => {
   return new Promise((resolve, reject) => {
     fetch(`http://localhost:3001/removeAnExpense/${id}`, {
@@ -58,6 +49,7 @@ export const removeAnExpense = id => {
   });
 };
 
+//remove all expenses
 export const removeExpenses = () => {
   return new Promise((resolve, reject) => {
     fetch(`http://localhost:3001/deleteAll`, {
@@ -74,6 +66,7 @@ export const removeExpenses = () => {
   });
 };
 
+//add an expense
 export const addExpense = expense => {
   return new Promise((resolve, reject) => {
     fetch(`${APIURL}/addExpense`, {

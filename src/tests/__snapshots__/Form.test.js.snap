@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Alert component snapshot should match 1`] = `
+<div
+  className="form-center"
+>
+  <div
+    className="form-group"
+  >
+    <label
+      htmlFor="expense"
+    >
+      charge
+    </label>
+    <input
+      className="form-control"
+      data-testid="form-charge-input"
+      id="charge"
+      name="charge"
+      placeholder="e.g. credits"
+      type="text"
+    />
+  </div>
+  <div
+    className="form-group"
+  >
+    <label
+      htmlFor="expense"
+    >
+      amount
+    </label>
+    <input
+      className="form-control"
+      data-testid="form-amount-input"
+      id="amount"
+      name="amount"
+      placeholder="e.g. 10"
+      type="number"
+    />
+  </div>
+</div>
+`;
